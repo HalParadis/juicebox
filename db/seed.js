@@ -6,7 +6,12 @@ const {
   createPost,
   updatePost,
   getAllPosts,
-  getUserById
+  getUserById,
+  getPostsByUser,
+  createPostTag,
+  getPostById,
+  createTags,
+  addTagsToPost
 } = require('./index');
 
 const dropTables = async () => {
@@ -14,6 +19,8 @@ const dropTables = async () => {
     console.log("Starting to drop tables...");
 
     await client.query(`
+      DROP TABLE IF EXISTS post_tags;
+      DROP TABLE IF EXISTS tags;
       DROP TABLE IF EXISTS posts;
       DROP TABLE IF EXISTS users;
     `);
@@ -45,6 +52,15 @@ const createTables = async () => {
         title varchar(255) NOT NULL,
         content TEXT NOT NULL,
         active BOOLEAN DEFAULT true
+      );
+      CREATE TABLE tags (
+        id SERIAL PRIMARY KEY,
+        name varchar(255) UNIQUE NOT NULL
+      );
+      CREATE TABLE post_tags (
+        "postId" INTEGER REFERENCES posts(id),
+        "tagId" INTEGER REFERENCES tags(id),
+        UNIQUE("postId", "tagId")
       );
     `);
 
@@ -96,19 +112,22 @@ const createInitialPosts = async () => {
     await createPost({
       authorId: albert.id,
       title: "Al's Post",
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Varius quam quisque id diam vel. Quis risus sed vulputate odio ut enim. Nunc sed id semper risus in hendrerit gravida rutrum quisque.'
+      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Varius quam quisque id diam vel. Quis risus sed vulputate odio ut enim. Nunc sed id semper risus in hendrerit gravida rutrum quisque.',
+      tags: ["#happy", "#youcandoanything"]
     });
 
     await createPost({
       authorId: sandra.id,
       title: "Sandy's Post",
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Varius quam quisque id diam vel. Quis risus sed vulputate odio ut enim. Nunc sed id semper risus in hendrerit gravida rutrum quisque.'
+      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Varius quam quisque id diam vel. Quis risus sed vulputate odio ut enim. Nunc sed id semper risus in hendrerit gravida rutrum quisque.',
+      tags: ["#happy", "#worst-day-ever"]
     });
 
     await createPost({
       authorId: glamgal.id,
       title: "Julia's Post",
-      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Varius quam quisque id diam vel. Quis risus sed vulputate odio ut enim. Nunc sed id semper risus in hendrerit gravida rutrum quisque.'
+      content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Varius quam quisque id diam vel. Quis risus sed vulputate odio ut enim. Nunc sed id semper risus in hendrerit gravida rutrum quisque.',
+      tags: ["#happy", "#youcandoanything", "#canmandoeverything"]
     });
 
     console.log("Finished creating users!");
@@ -160,6 +179,14 @@ const testDB = async () => {
     console.log("Calling getUserById with 1");
     const albert = await getUserById(1);
     console.log("Result:", albert);
+
+    console.log('Calling getPostById with 1');
+    const albertsPost = await getPostById(1);
+    console.log('Result:', albertsPost);
+
+    console.log('Calling getPostsByUser with 1');
+    const albertsPosts = await getPostsByUser(1);
+    console.log('Result:', albertsPosts);
 
     console.log("Finished database tests!");
   }
