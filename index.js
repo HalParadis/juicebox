@@ -2,6 +2,7 @@ const express = require('express');
 const apiRouter = require('./api');
 const morgan = require('morgan');
 const { client } = require('./db');
+require('dotenv').config();
 
 client.connect();
 

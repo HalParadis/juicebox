@@ -47,6 +47,20 @@ const getAllPosts = async () => {
   }
 }
 
+const getUserByUsername = async (username) => {
+  try {
+    const { rows: [ user ]} = await client.query(`
+      SELECT * 
+      FROM users
+      WHERE username=$1;
+    `, [username]);
+    return user;
+  }
+  catch (e) {
+    throw e;
+  }
+}
+
 const updateUser = async (id, fields = {}) => {
   const setString = Object.keys(fields).map(
     (key, index) => `"${ key }"=$${ index + 1 }`
@@ -333,4 +347,5 @@ module.exports = {
   addTagsToPost,
   getPostsByTagName,
   getAllTags,
+  getUserByUsername,
 }
