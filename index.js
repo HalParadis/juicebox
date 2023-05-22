@@ -21,19 +21,6 @@ server.get('/background/:color', (req, res, next) => {
   `);
 });
 
-// DONE: POST /api/users/register
-// DONE: POST /api/users/login
-// DELETE /api/users/:id
-
-// GET /api/posts
-// POST /api/posts
-// PATCH /api/posts/:id
-// DELETE /api/posts/:id
-
-// DONE: GET /api/tags
-// GET /api/tags/:tagName/posts
-
-
 const PORT = 3000;
 server.listen(PORT, () => {
   console.log('The server is up on port', PORT);
